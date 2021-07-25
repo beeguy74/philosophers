@@ -6,7 +6,7 @@
 #    By: tphung <tphung@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/10/28 13:18:04 by tphung            #+#    #+#              #
-#    Updated: 2021/07/25 13:10:07 by tphung           ###   ########.fr        #
+#    Updated: 2021/07/25 16:54:34 by tphung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ $(NAME): $(OBJECTS)
 	ranlib $(NAME)
 
 .c.o: 
-	gcc $(FLAGS) $< -o $@
+	@gcc $(FLAGS) $< -o $@
 
 clean:
 	@rm -rf $(OBJECTS)

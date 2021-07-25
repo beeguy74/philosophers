@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: tphung <marvin@42.fr>                      +#+  +:+       +#+         #
+#    By: tphung <tphung@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/19 18:37:57 by tphung            #+#    #+#              #
-#    Updated: 2021/07/25 15:59:05 by tphung           ###   ########.fr        #
+#    Updated: 2021/07/25 16:56:14 by tphung           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,15 +28,16 @@ LIBFT_DIR = libft/
 all: lib $(NAME)
 
 $(NAME): $(OBJ)
+		mv $(LIBFT) $(NAME)
 		ar rc $(NAME) $(OBJ)
 		ranlib $(NAME)
 
 lib:
 		make -C $(LIBFT_DIR)
-		cp $(LIBFT_DIR)$(LIBFT) ./$(NAME)
+		cp $(LIBFT_DIR)$(LIBFT) ./$(LIBFT)
 
 .c.o: $(SRCS)
-		$(CC) $(FLAGS)  -c $< -o $@ -I./includes -I./libft
+		@$(CC) $(FLAGS)  -c $< -o $@ -I./includes -I./libft
 
 clean:
 		rm -rf $(OBJ) $(DEPENDS)
