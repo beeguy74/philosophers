@@ -1,0 +1,16 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/tphung/Documents/printf'
+make -C libft/
+cp libft/libft.a ./libftprintf.a
+gcc -Wall -Wextra -Werror -MMD  -c ft_printf.c -o ft_printf.o -I./includes -I./libft
+gcc -Wall -Wextra -Werror -MMD  -c ft_parser.c -o ft_parser.o -I./includes -I./libft
+gcc -Wall -Wextra -Werror -MMD  -c ft_str_ch.c -o ft_str_ch.o -I./includes -I./libft
+gcc -Wall -Wextra -Werror -MMD  -c ft_numb_procs.c -o ft_numb_procs.o -I./includes -I./libft
+gcc -Wall -Wextra -Werror -MMD  -c ft_numb_utils.c -o ft_numb_utils.o -I./includes -I./libft
+gcc -Wall -Wextra -Werror -MMD  -c ft_pointer.c -o ft_pointer.o -I./includes -I./libft
+ 
+gcc -Wall -Wextra -Werror -MMD  -c ft_print_utils.c -o ft_print_utils.o -I./includes -I./libft
+ar rc libftprintf.a ft_printf.o ft_parser.o ft_str_ch.o ft_numb_procs.o ft_numb_utils.o ft_pointer.o ft_print_utils.o
+ranlib libftprintf.a
+make: Leaving directory `/Users/tphung/Documents/printf'
+ 
