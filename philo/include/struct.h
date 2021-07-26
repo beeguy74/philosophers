@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:54:29 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/26 15:39:09 by tphung           ###   ########.fr       */
+/*   Updated: 2021/07/26 18:57:21 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define STRUCT_H
 
 typedef struct timeval t_timeval;
+
+typedef struct s_phil
+{
+	int		name;
+	int		right_fork;
+	int		left_fork;
+} t_phil;
 
 typedef struct s_all
 {
@@ -25,5 +32,11 @@ typedef struct s_all
 	t_timeval	*init_time;
 } t_all;
 
+typedef struct s_main
+{
+	struct s_phil 	*phils;
+	pthread_mutex_t	*forks;
+	struct s_all	*all;
+} t_main;
 
 #endif
