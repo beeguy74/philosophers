@@ -61,6 +61,11 @@ int	init_phils(t_phil **phils, t_all *all, int flag)
 			(*phils)[i].left_fork = all->numb - 1;
 			(*phils)[i].right_fork = i;
 		}
+		else if (i == all->numb - 1)
+		{
+			(*phils)[i].left_fork = i - 1;
+			(*phils)[i].right_fork = i;
+		}
 		else
 			(*phils)[i].right_fork = i - 1;
 		i++;
@@ -87,31 +92,63 @@ int	init_mutex(pthread_mutex_t **forks, t_all *all, int flag)
 	return (0);
 }
 
-void	eat(void *args)
+void	*eat(void *args)
 {
 	t_main *main;
 
 	main = (t_main *)args;
-	ft_printf("%d started dinner\n", main->phils->name);
+	while (1)
+	{
+		//ft_printf("%d started dinner\n", main->phils->name);
+		ft_putnbr_fd(main->phils->name, 1);
+		ft_putendl_fd(" is thinking", 1);
+		pthread_mutex_lock(&main->forks[main->phils->right_fork]);
+		pthread_mutex_lock(&main->forks[main->phils->left_fork]);
+		ft_putnbr_fd(main->phils->name, 1);
+		ft_putendl_fd(" is eating", 1);
+		usleep(main->all->eat_time * 1000);
+	 
+		//ft_printf("%d is eating\n", main->phils->name);
+	 
+		pthread_mutex_unlock(&main->forks[main->phils->right_fork]);
+		pthread_mutex_unlock(&main->forks[main->phils->left_fork]);
+		ft_putnbr_fd(main->phils->name, 1);
+		ft_putendl_fd(" sleeping", 1);
+		usleep(main->all->sleep_time * 1000);
+	}
+ 
+    //ft_printf("%d finished dinner\n", main->phils->name);
+	return (NULL);
 }
 
 int	init_threads(t_main *main, int flag)
 {
 	int			i;
 	pthread_t	*threads;
+	t_main		tmp;
+	t_phil		*mas;
 
 	if (flag)
 		return (1);
-	i = 0;
 	threads = (pthread_t *)malloc(sizeof(pthread_t) * (main->all->numb));
 	if (!threads)
 		return (1);
+	i = 0;
+	mas = main->phils;
+	tmp.forks = main->forks;
+	tmp.all = main->all;
 	while (i < main->all->numb)
 	{
-		if (pthread_create(&threads[i], NULL, eat, main))
+		tmp.phils = &mas[i];
+		if (i == main->all->numb - 1)
+			usleep(100);
+		if (pthread_create(&threads[i], NULL, eat, &tmp))
 			return (1);
-		i++
+		i++;
 	}
+	i = 0;
+	while (i < main->all->numb)
+		pthread_join(threads[i++], NULL);
 	return (0);
 }
 
@@ -127,22 +164,24 @@ int	main(int ac, char **av)
 		return (1);
 	main.all = &all;
 	ft_printf("seconds = %d \n", elapsed_time_ms(all.init_time));
+
+	flag = get_args(ac, av + 1, &all);
 	ft_printf("ARGs = %d %d %d %d \n", all.numb, all.die_time, \
 			all.eat_time, all.sleep_time);
 
-	flag = get_args(ac, av + 1, &all);
-	flag = init_mutex(&main.forks, &all, flag);
-	flag = init_phils(&main.phils, &all, flag);
-	flag = init_threads(&main, flag);
-
 	i = 0;
-		i = 0;
+	flag = init_phils(&main.phils, &all, flag);
 	while (i < all.numb)
 	{
+		ft_putstr_fd("work\n", 1);
 		ft_printf("name = %d, left = %d, right = %d\n", main.phils[i].name, main.phils[i].left_fork, \
 			main.phils[i].right_fork);
 		i++;
 	}
+	flag = init_mutex(&main.forks, &all, flag);
+	
+	flag = init_threads(&main, flag);
+	i = 0;
 	free (main.phils);	
 	return (0);
 }

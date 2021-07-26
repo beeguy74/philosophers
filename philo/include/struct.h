@@ -18,8 +18,8 @@ typedef struct timeval t_timeval;
 typedef struct s_phil
 {
 	int		name;
-	int		right_fork;
 	int		left_fork;
+	int		right_fork;
 } t_phil;
 
 typedef struct s_all
