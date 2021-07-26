@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -Wall -Wextra -MMD #-Werror -g
 VPATH := include:printf:printf/libft:printf/includes
-SRCS = main.c
+SRCS = main.c validator.c
 
 INC = philo.h struct.h ft_printf.h libft.h
 

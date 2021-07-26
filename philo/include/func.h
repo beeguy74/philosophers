@@ -6,13 +6,13 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 15:40:01 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/25 16:16:22 by tphung           ###   ########.fr       */
+/*   Updated: 2021/07/26 14:41:47 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FUNC_H
 # define FUNC_H
 
-
+int	get_args(int argc, char **argv, t_all *all);
 
 #endif
