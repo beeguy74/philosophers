@@ -58,13 +58,8 @@ int	init_phils(t_phil **phils, t_all *all, int flag)
 		(*phils)[i].left_fork = i;
 		if (i == 0)
 		{
+			(*phils)[i].right_fork = i;
 			(*phils)[i].left_fork = all->numb - 1;
-			(*phils)[i].right_fork = i;
-		}
-		else if (i == all->numb - 1)
-		{
-			(*phils)[i].left_fork = i - 1;
-			(*phils)[i].right_fork = i;
 		}
 		else
 			(*phils)[i].right_fork = i - 1;
@@ -110,8 +105,8 @@ void	*eat(void *args)
 	 
 		//ft_printf("%d is eating\n", main->phils->name);
 	 
-		pthread_mutex_unlock(&main->forks[main->phils->right_fork]);
 		pthread_mutex_unlock(&main->forks[main->phils->left_fork]);
+		pthread_mutex_unlock(&main->forks[main->phils->right_fork]);
 		ft_putnbr_fd(main->phils->name, 1);
 		ft_putendl_fd(" sleeping", 1);
 		usleep(main->all->sleep_time * 1000);
