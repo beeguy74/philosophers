@@ -44,6 +44,7 @@ int	init_struct(t_all **all)
 		.sleep_time = 0,
 		.numb = 0,
 		.must_eat = 0,
+		.flag = 0,
 		.init_time = time
 	};
 	return (0);
@@ -65,6 +66,7 @@ int	init_phils(t_phil **phils, t_all *all, pthread_mutex_t *forks, int flag)
 		(*phils)[i].all = all;
 		(*phils)[i].name = i;
 		(*phils)[i].left_fork = i;
+		(*phils)[i].actual_eat_time = 0;
 		if (i == 0)
 		{
 			(*phils)[i].right_fork = i;
@@ -111,36 +113,56 @@ void	ft_usleep(int time)
 
 void	*eat(void *args)
 {
-	t_phil			main;
+	t_phil			*main;
 	long long int	init_time;
 
-	main = *(t_phil *)args;
-	init_time = main.all->init_time;
+	main = (t_phil *)args;
+	init_time = main->all->init_time;
 	while (1)
 	{
 		// pthread_mutex_lock(&main.forks[main.all->numb]);
-		printf("%d %d is thinking\n", elapsed_time_ms(init_time), main.name);
+		if (main->all->flag)
+			break ;
+		printf("%d %d is thinking\n", elapsed_time_ms(init_time), main->name);
 		// pthread_mutex_unlock(&main.forks[main.all->numb]);
 
-		pthread_mutex_lock(&main.forks[main.right_fork]);
-		pthread_mutex_lock(&main.forks[main.left_fork]);
-		main.eat_time = elapsed_time_ms(init_time);
+		pthread_mutex_lock(&main->forks[main->right_fork]);
+		pthread_mutex_lock(&main->forks[main->left_fork]);
+		main->actual_eat_time = elapsed_time_ms(init_time);
 
 		// pthread_mutex_lock(&main.forks[main.all->numb]);
-		printf("%d %d is eating\n", main.eat_time, main.name);
+		if (main->all->flag)
+			break ;
+		printf("%d %d is eating\n", main->actual_eat_time, main->name);
 		// pthread_mutex_unlock(&main.forks[main.all->numb]);
 
-		ft_usleep(main.all->eat_time);
-		pthread_mutex_unlock(&main.forks[main.left_fork]);
-		pthread_mutex_unlock(&main.forks[main.right_fork]);
+		usleep(main->all->eat_time * 1000);
+		//ft_usleep(main.all->eat_time);
+		pthread_mutex_unlock(&main->forks[main->left_fork]);
+		pthread_mutex_unlock(&main->forks[main->right_fork]);
 
 		// pthread_mutex_lock(&main.forks[main.all->numb]);
-		printf("%d %d is sleeping\n", elapsed_time_ms(init_time), main.name);
+		if (main->all->flag)
+			break ;
+		printf("%d %d is sleeping\n", elapsed_time_ms(init_time), main->name);
 		// pthread_mutex_unlock(&main.forks[main.all->numb]);
 
-		ft_usleep(main.all->sleep_time);
+		usleep(main->all->sleep_time * 1000);
+		//ft_usleep(main.all->sleep_time);
 	}
 	return (NULL);
+}
+
+int	peace_death(t_phil main)
+{
+	int	time_elapsed;
+	int	death_time;
+
+	time_elapsed = elapsed_time_ms(main.all->init_time);
+	death_time = time_elapsed - main.actual_eat_time;
+	if (death_time > main.all->die_time && time_elapsed > death_time)
+		return (time_elapsed);
+	return (0);
 }
 
 int	init_threads(t_phil *main, int flag)
@@ -160,6 +182,18 @@ int	init_threads(t_phil *main, int flag)
 		if (pthread_create(&threads[i], NULL, eat, &(main[i])))
 			return (1);
 		i++;
+	}
+	i = 0;
+	while (1)
+	{
+		main->all->flag = peace_death(main[i]);
+		if (main->all->flag)
+		{
+			printf("%d %d is dead\n", main->all->flag, main[i].name);
+			break ;
+		}
+		if (++i == main->all->numb)
+			i = 0;
 	}
 	i = 0;
 	while (i < main->all->numb)
