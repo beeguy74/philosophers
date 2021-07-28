@@ -123,7 +123,7 @@ void	*eat(void *args)
 		// pthread_mutex_lock(&main.forks[main.all->numb]);
 		if (main->all->flag)
 			break ;
-		printf("%d %d is thinking\n", elapsed_time_ms(init_time), main->name);
+		printf("%-7d %d is thinking\n", elapsed_time_ms(init_time), main->name);
 		// pthread_mutex_unlock(&main.forks[main.all->numb]);
 
 		pthread_mutex_lock(&main->forks[main->right_fork]);
@@ -133,7 +133,7 @@ void	*eat(void *args)
 		// pthread_mutex_lock(&main.forks[main.all->numb]);
 		if (main->all->flag)
 			break ;
-		printf("%d %d is eating\n", main->actual_eat_time, main->name);
+		printf("%-7d %d is eating\n", main->actual_eat_time, main->name);
 		// pthread_mutex_unlock(&main.forks[main.all->numb]);
 
 		usleep(main->all->eat_time * 1000);
@@ -144,7 +144,7 @@ void	*eat(void *args)
 		// pthread_mutex_lock(&main.forks[main.all->numb]);
 		if (main->all->flag)
 			break ;
-		printf("%d %d is sleeping\n", elapsed_time_ms(init_time), main->name);
+		printf("%-7d %d is sleeping\n", elapsed_time_ms(init_time), main->name);
 		// pthread_mutex_unlock(&main.forks[main.all->numb]);
 
 		usleep(main->all->sleep_time * 1000);
@@ -189,7 +189,7 @@ int	init_threads(t_phil *main, int flag)
 		main->all->flag = peace_death(main[i]);
 		if (main->all->flag)
 		{
-			printf("%d %d is dead\n", main->all->flag, main[i].name);
+			printf("%-7d %d is dead\n", main->all->flag, main[i].name);
 			break ;
 		}
 		if (++i == main->all->numb)
