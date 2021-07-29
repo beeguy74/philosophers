@@ -1,36 +1,28 @@
 CC = gcc
 FLAGS = -Wall -Wextra -MMD #-g -fsanitize=address #-Werror
-VPATH := include:printf:printf/libft:printf/includes
+VPATH := include
 SRCS = main.c validator.c
 
-INC = philo.h struct.h ft_printf.h libft.h
+INC = philo.h struct.h
 
 OBJ = $(SRCS:.c=.o)
 DEPENDS = ${SRCS:.c=.d}
-LFT = libftprintf.a
 NAME = philo
 
-.PHONY: all clean fclean re lib
+.PHONY: all clean fclean re
 
-all: lib $(SRCS) $(NAME)
+all: $(SRCS) $(NAME)
 
 $(NAME): $(OBJ)
-		gcc $(FLAGS) $(OBJ) $(LFT) -o $(NAME)
-
-lib :
-		make -C printf
-		mv printf/$(LFT) .
+		gcc $(FLAGS) $(OBJ) -o $(NAME)
 
 .c.o: $(SRCS)
-		$(CC) $(FLAGS) -c $< -I./include -I./printf/includes -I./printf/libft
+		$(CC) $(FLAGS) -c $< -I./include
 
 clean:
-		make clean -C ./printf/
-		@rm -rf $(LFT)
 		@rm -rf $(OBJ) $(DEPENDS)
 
 fclean: clean
-		make fclean -C ./printf/
 		@rm -rf $(NAME)
 
 re: fclean all

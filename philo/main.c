@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/29 16:23:30 by tphung           ###   ########.fr       */
+/*   Updated: 2021/07/29 16:55:34 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	init_phils(t_phil **phils, t_all *all, pthread_mutex_t *forks, int flag)
 	{
 		(*phils)[i].forks = forks;
 		(*phils)[i].all = all;
-		(*phils)[i].name = i;
+		(*phils)[i].name = i + 1;
 		(*phils)[i].left_fork = i;
 		(*phils)[i].actual_eat_time = 0;
 		(*phils)[i].num_eat = 0;
