@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -Wextra -MMD -g -fsanitize=address #-Werror
+FLAGS = -Wall -Wextra -MMD #-g -fsanitize=address #-Werror
 VPATH := include:printf:printf/libft:printf/includes
 SRCS = main.c validator.c
 

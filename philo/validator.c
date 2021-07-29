@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/23 20:49:30 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/27 14:56:55 by tphung           ###   ########.fr       */
+/*   Updated: 2021/07/29 15:59:34 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ int	validator(char *numb, int ord, void *all)
 	if (!content)
 		return (1);
 	*(int *)(all + ord * 4) = *content;
+	free (content);
 	return (0);
 }
 
