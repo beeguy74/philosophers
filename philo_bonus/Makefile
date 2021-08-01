@@ -1,7 +1,7 @@
 CC = gcc
 FLAGS = -Wall -Wextra -MMD -pthread#-g -fsanitize=address #-Werror
 VPATH := include
-SRCS = main.c validator.c
+SRCS = main.c validator.c utils.c init.c
 
 INC = philo.h struct.h
 
