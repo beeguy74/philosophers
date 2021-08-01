@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/31 18:54:45 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/01 13:10:41 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,21 +87,21 @@ void	*eat(void *args)
 	init_time = all->init_time;
 	while (phil->num_eat != all->must_eat)
 	{
-		/*if (main->all->flag)
-			break ;*/
+		if (all->flag)
+			break ;
 		printf("%-7d %d is thinking\n", elapsed_time_ms(init_time), phil->name);
 		sem_wait(all->sem);
 		sem_wait(all->sem);
 		phil->actual_eat_time = elapsed_time_ms(init_time);
-		/*if (main->all->flag)
-			break ;*/
+		if (all->flag)
+			break ;
 		printf("%-7d %d is eating\n", phil->actual_eat_time, phil->name);
 		ft_usleep(all->eat_time, phil->actual_eat_time, init_time);
 		phil->num_eat++;
 		sem_post(all->sem);
 		sem_post(all->sem);
-		/*if (main->all->flag)
-			break ;*/
+		if (all->flag)
+			break ;
 		asleep_time = elapsed_time_ms(init_time);
 		printf("%-7d %d is sleeping\n", asleep_time, phil->name);
 		ft_usleep(all->eat_time, phil->actual_eat_time, init_time);
@@ -109,33 +109,38 @@ void	*eat(void *args)
 	return (NULL);
 }
 
-int	peace_death(t_phil main)
+int	peace_death(t_main *main)
 {
 	int	time_elapsed;
 	int	death_time;
 
-	time_elapsed = elapsed_time_ms(main.all->init_time);
-	death_time = time_elapsed - main.actual_eat_time;
-	if (death_time - main.all->die_time > 0)
+	time_elapsed = elapsed_time_ms(main->all->init_time);
+	death_time = time_elapsed - main->phil->actual_eat_time;
+	if (death_time - main->all->die_time > 0)
 		return (time_elapsed);
 	return (0);
 }
 
-int	death_loop(t_phil *main)
+void	*death_loop(void *args)
 {
-	int	i;
+	int	death_time;
+	t_main	*main;
 
-	i = -1;
-	while (!main->all->flag)
+	main = (t_main *)args;
+	death_time = 0;
+	while (!death_time)
 	{
-		if (++i == main->all->numb)
-			i = 0;
-		main->all->flag = peace_death(main[i]);
-		if ((*main)[i].num_eat == (*main)->all->must_eat)
-			return (0);
+		death_time = peace_death(main);
+		if (main->phil->num_eat == main->all->must_eat || main->all->flag)
+			return (NULL);
+		if (death_time)
+		{
+			sem_post(main->all->sem_dth);
+			break ;
+		}
 	}
-	printf("%-7d %d is dead\n", (*main)->all->flag, (*main)[i].name);
-	return (0);
+	printf("%-7d %d is dead\n", death_time, main->phil->name);
+	return (NULL);
 }
 
 void	*ft_wait(void *args)
@@ -144,6 +149,7 @@ void	*ft_wait(void *args)
 
 	main = (t_main *)args;
 	sem_wait(main->all->sem_dth);
+	sem_post(main->all->sem_dth);
 	main->all->flag = 1;
 	return (NULL);
 }
@@ -152,24 +158,28 @@ int	init_threads(t_phil *phil, t_all *all)
 {
 	int			i;
 	pthread_t	*threads;
-	t_main		*main;
+	t_main		main;
 
-	threads = (pthread_t *)malloc(sizeof(pthread_t) * 2);
+	main.all = all;
+	main.phil = phil;
+	threads = (pthread_t *)malloc(sizeof(pthread_t) * 3);
 	if (!threads)
 		return (1);
-	i = -1;
-	if (pthread_create(&threads[i], NULL, eat, &(main[i])))
+	if (pthread_create(&threads[0], NULL, eat, &main))
 		return (1);
-	if (pthread_create(&threads[i], NULL, ft_wait, &(main[i])))
+	if (pthread_create(&threads[1], NULL, ft_wait, &main))
 		return (1);
-	death_loop(main);
+	//if (pthread_create(&threads[2], NULL, death_loop, &main))
+		//return (1);
+	death_loop(&main);
 	i = 0;
-	while (i < main->all->numb)
+	while (i < 3)
 	{
-		if (main->all->flag)
-			pthread_detach(threads[i++]);
-		else
-			pthread_join(threads[i++], NULL);
+		printf("detach\n");
+		//if (main.all->flag)
+		pthread_detach(threads[i++]);
+		//else
+			//pthread_join(threads[i++], NULL);
 	}
 	return (0);
 }
@@ -183,9 +193,7 @@ pid_t	fork_exec(t_phil *phil, t_all *all)
 		return (-1);
 	else if (pid == 0)
 	{
-		eat(phil, all);
-		sem_close(all->sem);
-		sem_close(all->sem_dth);
+		init_threads(phil, all);
 		exit(0);
 	}
 	return (pid);
@@ -221,7 +229,6 @@ int	init_forks(t_phil *main, t_all *all, int flag)
 	{
 		pids[i] = fork_exec(&main[i], all);
 	}
-	//death_loop(&main);
 	waitpid_forall(pids, all->numb);
 	free(pids);
 	return (0);
