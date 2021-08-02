@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:54:29 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/01 15:14:11 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/02 17:40:46 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,10 @@ typedef struct s_all
 	long long int	init_time;
 	char			*sem_name;
 	char			*sem_dth_name;
+	char			*sem_prnt_name;
 	sem_t			*sem_dth;
 	sem_t			*sem;
+	sem_t			*sem_prnt;
 }	t_all;
 
 typedef struct s_phil

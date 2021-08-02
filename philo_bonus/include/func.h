@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 15:40:01 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/01 15:09:38 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/02 18:17:17 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	*eat(void *args);
 void	*ft_wait(void *args);
 void	*death_loop(void *args);
 pid_t	fork_exec(t_phil *phil, t_all *all);
-int		waitpid_forall(pid_t *pids, int num);
+int		waitpid_forall(pid_t *pids, t_all *all);
 int		elapsed_time_ms(long long int init_time);
 void	ft_usleep(int time, int when_asleep, long long int init_time);
 int		init_sem(t_all *all, int flag);

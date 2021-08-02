@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 14:58:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/01 15:08:00 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/02 19:15:45 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,30 @@ void	*death_loop(void *args)
 	while (!death_time)
 	{
 		death_time = peace_death(main);
-		if (main->phil->num_eat == main->all->must_eat || main->all->flag)
+		if (main->phil->num_eat == main->all->must_eat)
+		{
 			return (NULL);
+		}
 		if (death_time)
 		{
 			sem_post(main->all->sem_dth);
+			sem_wait(main->all->sem_prnt);
+			printf("%-7d %d is dead\n", death_time, main->phil->name);
 			break ;
 		}
 	}
-	printf("%-7d %d is dead\n", death_time, main->phil->name);
 	return (NULL);
 }
 
-int	waitpid_forall(pid_t *pids, int num)
+int	waitpid_forall(pid_t *pids, t_all *all)
 {
 	int	i;
 	int	stat;
 
 	i = 0;
-	while (i < num)
+	while (i < all->numb)
 	{
+		kill(pids[i], SIGINT);
 		waitpid(pids[i], &stat, 0);
 		i++;
 	}
