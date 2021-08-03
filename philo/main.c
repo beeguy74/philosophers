@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/29 16:55:34 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/03 17:25:38 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ int	init_mutex(pthread_mutex_t **forks, t_all *all, int flag)
 
 void	ft_usleep(int time, int when_asleep, long long int init_time)
 {
+	usleep(time * 900);
 	while (time > elapsed_time_ms(init_time) - when_asleep)
 		usleep(50);
 }
@@ -117,6 +118,8 @@ void	*eat(void *args)
 		if (main->all->flag)
 			break ;
 		printf("%-7d %d is thinking\n", elapsed_time_ms(init_time), main->name);
+		//if (!(main->name % 2))
+			//usleep(100);
 		pthread_mutex_lock(&main->forks[main->left_fork]);
 		pthread_mutex_lock(&main->forks[main->right_fork]);
 		main->actual_eat_time = elapsed_time_ms(init_time);

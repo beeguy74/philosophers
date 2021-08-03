@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:54:29 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/29 16:16:22 by tphung           ###   ########.fr       */
+/*   Updated: 2021/07/29 17:42:25 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ typedef struct s_all
 	int				sleep_time;
 	int				must_eat;
 	int				flag;
-	//t_timeval	*init_time;
 	long long int	init_time;
 } t_all;
 
