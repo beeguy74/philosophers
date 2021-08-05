@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 17:34:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/02 18:30:33 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/05 18:04:55 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	init_forks(t_phil *main, t_all *all, int flag)
 		pids[i] = fork_exec(&main[i], all);
 	}
 	sem_wait(all->sem_dth);
-	waitpid_forall(pids, all);
+	//waitpid_forall(pids, all);
 	free(pids);
 	return (0);
 }

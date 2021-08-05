@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/03 17:25:38 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/05 15:52:11 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,18 @@ int	init_phils(t_phil **phils, t_all *all, pthread_mutex_t *forks, int flag)
 		(*phils)[i].forks = forks;
 		(*phils)[i].all = all;
 		(*phils)[i].name = i + 1;
-		(*phils)[i].left_fork = i;
 		(*phils)[i].actual_eat_time = 0;
 		(*phils)[i].num_eat = 0;
-		if (i == all->numb - 1)
+		if (i == 0)
 		{
 			(*phils)[i].right_fork = i;
-			(*phils)[i].left_fork = 0;
+			(*phils)[i].left_fork = all->numb - 1;
 		}
 		else
-			(*phils)[i].right_fork = i + 1;
+		{
+			(*phils)[i].right_fork = i - 1;
+			(*phils)[i].left_fork = i;
+		}
 		i++;
 	}
 	return (0);
@@ -85,10 +87,10 @@ int	init_mutex(pthread_mutex_t **forks, t_all *all, int flag)
 	if (flag)
 		return (1);
 	i = 0;
-	fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (all->numb + 1));
+	fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (all->numb + 2));
 	if (!fork)
 		return (1);
-	while (i < all->numb + 1)
+	while (i < all->numb + 2)
 	{
 		if (pthread_mutex_init(&fork[i], NULL))
 			return (1);
@@ -105,6 +107,13 @@ void	ft_usleep(int time, int when_asleep, long long int init_time)
 		usleep(50);
 }
 
+void	ft_mut_print(t_phil *main, char *mes, long long int time, int name)
+{
+	pthread_mutex_lock(&main->forks[main->all->numb + 1]);
+	printf("%-7d %d %s\n", elapsed_time_ms(time), name, mes);
+	pthread_mutex_unlock(&main->forks[main->all->numb + 1]);
+}
+
 void	*eat(void *args)
 {
 	t_phil			*main;
@@ -117,23 +126,23 @@ void	*eat(void *args)
 	{
 		if (main->all->flag)
 			break ;
-		printf("%-7d %d is thinking\n", elapsed_time_ms(init_time), main->name);
-		//if (!(main->name % 2))
-			//usleep(100);
-		pthread_mutex_lock(&main->forks[main->left_fork]);
+		ft_mut_print(main, "is thinking", init_time, main->name);
 		pthread_mutex_lock(&main->forks[main->right_fork]);
-		main->actual_eat_time = elapsed_time_ms(init_time);
+		ft_mut_print(main, "has taken right fork", init_time, main->name);
+		pthread_mutex_lock(&main->forks[main->left_fork]);
+		ft_mut_print(main, "has taken left fork", init_time, main->name);
 		if (main->all->flag)
 			break ;
-		printf("%-7d %d is eating\n", main->actual_eat_time, main->name);
+		main->actual_eat_time = elapsed_time_ms(init_time);
+		ft_mut_print(main, "is eating", init_time, main->name);
 		ft_usleep(main->all->eat_time, main->actual_eat_time, init_time);
 		main->num_eat++;
-		pthread_mutex_unlock(&main->forks[main->right_fork]);
 		pthread_mutex_unlock(&main->forks[main->left_fork]);
+		pthread_mutex_unlock(&main->forks[main->right_fork]);
 		if (main->all->flag)
 			break ;
 		asleep_time = elapsed_time_ms(init_time);
-		printf("%-7d %d is sleeping\n", asleep_time, main->name);
+		ft_mut_print(main, "is sleeping", init_time, main->name);
 		ft_usleep(main->all->sleep_time, asleep_time, init_time);
 	}
 	return (NULL);
@@ -164,6 +173,7 @@ int	death_loop(t_phil **main)
 		if ((*main)[i].num_eat == (*main)->all->must_eat)
 			return (0);
 	}
+	pthread_mutex_lock(&(*main)[i].forks[(*main)->all->numb + 1]);
 	printf("%-7d %d is dead\n", (*main)->all->flag, (*main)[i].name);
 	return (0);
 }
