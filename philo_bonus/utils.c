@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 14:58:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/05 18:35:02 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/06 18:42:05 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,26 @@ void	*death_loop(void *args)
 {
 	int		death_time;
 	t_main	*main;
+	int		i;
 
 	main = (t_main *)args;
 	death_time = 0;
-	while (!death_time)
+	while (!death_time && main->phil->num_eat != main->all->must_eat)
 	{
-		death_time = peace_death(main);
-		if (main->phil->num_eat == main->all->must_eat)
+		if (main->all->flag)
 		{
-			return (NULL);
+			main->all->flag = 0;
+			ft_usleep(main->all->die_time - 10, main->phil->actual_eat_time, \
+													main->all->init_time);
 		}
+		death_time = peace_death(main);
 		if (death_time)
 		{
-			main->all->flag = 1;
 			sem_wait(main->all->sem_prnt);
 			printf("%-7d %d is dead\n", death_time, main->phil->name);
-			// ft_sem_print("is dead", death_time, main->phil->name, main->all->sem_prnt);
-			sem_post(main->all->sem_dth);
-			exit(1);
+			i = 0;
+			while (i++ <= main->all->numb)
+				sem_post(main->all->sem_dth);
 		}
 	}
 	return (NULL);
@@ -62,11 +64,10 @@ int	waitpid_forall(pid_t *pids, t_all *all)
 	int	i;
 	int	stat;
 
-	i = 0;
-	while (i < all->numb)
+	i = 1;
+	while (i <= all->numb)
 	{
-		//kill(pids[i], SIGINT);
-		waitpid(pids[i], &stat, 0);
+		waitpid(pids[all->numb - i], &stat, 0);
 		i++;
 	}
 	return (0);

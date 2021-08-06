@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -Wextra -MMD -pthread#-g -fsanitize=address #-Werror
+FLAGS = -Wall -Wextra -Werror -MMD -pthread#-g -fsanitize=address
 VPATH := include
 SRCS = main.c validator.c utils.c init.c init_forks.c
 

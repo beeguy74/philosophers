@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/05 18:36:20 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/06 18:18:08 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,10 @@ void	ft_sem_print(char *mes, int time, int name, sem_t *sem)
 
 void	is_eating(t_phil *phil, t_all *all)
 {
-	phil->num_eat++;
-	if (all->flag)
-		return ;
 	phil->actual_eat_time = elapsed_time_ms(all->init_time);
-	if (!all->flag)
-		ft_sem_print("is eating", phil->actual_eat_time, phil->name, all->sem_prnt);
+	all->flag = 1;
+	ft_sem_print("is eating", phil->actual_eat_time, phil->name, \
+														all->sem_prnt);
 	ft_usleep(all->eat_time, phil->actual_eat_time, all->init_time);
 	sem_post(all->sem);
 	sem_post(all->sem);
@@ -42,21 +40,14 @@ void	*eat(void *args)
 	phil = ((t_main *)args)->phil;
 	while (phil->num_eat != all->must_eat)
 	{
-		if (all->flag)
-			break ;
 		time = elapsed_time_ms(all->init_time);
-		if (!all->flag)
-			ft_sem_print("is thinking", time, phil->name, all->sem_prnt);
+		ft_sem_print("is thinking", time, phil->name, all->sem_prnt);
 		sem_wait(all->sem);
 		sem_wait(all->sem);
-		if (all->flag)
-			break ;
 		is_eating(phil, all);
-		if (all->flag)
-			break ;
+		phil->num_eat++;
 		time = elapsed_time_ms(all->init_time);
-		if (!all->flag)
-			ft_sem_print("is sleeping", time, phil->name, all->sem_prnt);
+		ft_sem_print("is sleeping", time, phil->name, all->sem_prnt);
 		ft_usleep(all->sleep_time, time, all->init_time);
 	}
 	sem_post(all->sem_prnt);
@@ -95,5 +86,6 @@ int	main(int ac, char **av)
 	sem_close(all->sem_dth);
 	sem_close(all->sem_prnt);
 	free(phils);
+	free(all);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 17:34:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/05 18:04:55 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/06 18:39:48 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,10 @@ int	init_threads(t_phil *phil, t_all *all)
 	death_loop(&main);
 	i = 0;
 	while (i < 3)
+	{
 		pthread_detach(threads[i++]);
+	}
+	free (threads);
 	return (0);
 }
 
@@ -44,7 +47,7 @@ pid_t	fork_exec(t_phil *phil, t_all *all)
 	else if (pid == 0)
 	{
 		init_threads(phil, all);
-		exit(0);
+		exit(1);
 	}
 	return (pid);
 }
@@ -64,8 +67,7 @@ int	init_forks(t_phil *main, t_all *all, int flag)
 	{
 		pids[i] = fork_exec(&main[i], all);
 	}
-	sem_wait(all->sem_dth);
-	//waitpid_forall(pids, all);
+	waitpid_forall(pids, all);
 	free(pids);
 	return (0);
 }

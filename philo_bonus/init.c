@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 15:01:37 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/02 17:41:17 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/06 17:14:46 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	init_struct(t_all **all)
 	if (!init_time || gettimeofday(init_time, NULL))
 		return (1);
 	time = init_time->tv_sec * 1000 + init_time->tv_usec / 1000;
+	free (init_time);
 	*all = malloc(sizeof(t_all));
 	if (!*all)
 		return (1);
