@@ -6,112 +6,43 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/05 15:52:11 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/06 17:12:26 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	elapsed_time_ms(long long int init_time)
+void	forks_up(t_phil *main, long long int init_time)
 {
-	t_timeval	timeval;
-	int			elaps_time;
-
-	if (gettimeofday(&timeval, NULL))
-		return (-1);
-	elaps_time = timeval.tv_sec * 1000 + timeval.tv_usec / 1000 - init_time;
-	return (elaps_time);
-}
-
-int	init_struct(t_all **all)
-{
-	t_timeval		*init_time;
-	long long int	time;
-
-	init_time = malloc(sizeof(t_timeval));
-	if (!init_time || gettimeofday(init_time, NULL))
-		return (1);
-	time = init_time->tv_sec * 1000 + init_time->tv_usec / 1000;
-	*all = malloc(sizeof(t_all));
-	if (!*all)
-		return (1);
-	**all = (t_all){
-		.die_time = 0,
-		.eat_time = 0,
-		.sleep_time = 0,
-		.numb = 0,
-		.must_eat = -1,
-		.flag = 0,
-		.init_time = time
-	};
-	return (0);
-}
-
-int	init_phils(t_phil **phils, t_all *all, pthread_mutex_t *forks, int flag)
-{
-	int		i;
-
-	if (flag)
-		return (1);
-	i = 0;
-	*phils = (t_phil *)malloc(sizeof(t_phil) * (all->numb));
-	if (!*phils)
-		return (1);
-	while (i < all->numb)
+	ft_mut_print(main, "is thinking", init_time, main->name);
+	if (main->name % 2 == 0)
 	{
-		(*phils)[i].forks = forks;
-		(*phils)[i].all = all;
-		(*phils)[i].name = i + 1;
-		(*phils)[i].actual_eat_time = 0;
-		(*phils)[i].num_eat = 0;
-		if (i == 0)
-		{
-			(*phils)[i].right_fork = i;
-			(*phils)[i].left_fork = all->numb - 1;
-		}
-		else
-		{
-			(*phils)[i].right_fork = i - 1;
-			(*phils)[i].left_fork = i;
-		}
-		i++;
+		pthread_mutex_lock(&main->forks[main->left_fork]);
+		ft_mut_print(main, "has taken left fork", init_time, main->name);
+		pthread_mutex_lock(&main->forks[main->right_fork]);
+		ft_mut_print(main, "has taken right fork", init_time, main->name);
 	}
-	return (0);
-}
-
-int	init_mutex(pthread_mutex_t **forks, t_all *all, int flag)
-{
-	pthread_mutex_t	*fork;
-	int				i;
-
-	if (flag)
-		return (1);
-	i = 0;
-	fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * (all->numb + 2));
-	if (!fork)
-		return (1);
-	while (i < all->numb + 2)
+	else
 	{
-		if (pthread_mutex_init(&fork[i], NULL))
-			return (1);
-		i++;
+		pthread_mutex_lock(&main->forks[main->right_fork]);
+		ft_mut_print(main, "has taken right fork", init_time, main->name);
+		pthread_mutex_lock(&main->forks[main->left_fork]);
+		ft_mut_print(main, "has taken left fork", init_time, main->name);
 	}
-	*forks = fork;
-	return (0);
 }
 
-void	ft_usleep(int time, int when_asleep, long long int init_time)
+void	forks_down(t_phil *main)
 {
-	usleep(time * 900);
-	while (time > elapsed_time_ms(init_time) - when_asleep)
-		usleep(50);
-}
-
-void	ft_mut_print(t_phil *main, char *mes, long long int time, int name)
-{
-	pthread_mutex_lock(&main->forks[main->all->numb + 1]);
-	printf("%-7d %d %s\n", elapsed_time_ms(time), name, mes);
-	pthread_mutex_unlock(&main->forks[main->all->numb + 1]);
+	if (main->name % 2 == 0)
+	{
+		pthread_mutex_unlock(&main->forks[main->right_fork]);
+		pthread_mutex_unlock(&main->forks[main->left_fork]);
+	}
+	else
+	{
+		pthread_mutex_unlock(&main->forks[main->left_fork]);
+		pthread_mutex_unlock(&main->forks[main->right_fork]);
+	}
 }
 
 void	*eat(void *args)
@@ -124,58 +55,20 @@ void	*eat(void *args)
 	init_time = main->all->init_time;
 	while (main->num_eat != main->all->must_eat)
 	{
-		if (main->all->flag)
-			break ;
-		ft_mut_print(main, "is thinking", init_time, main->name);
-		pthread_mutex_lock(&main->forks[main->right_fork]);
-		ft_mut_print(main, "has taken right fork", init_time, main->name);
-		pthread_mutex_lock(&main->forks[main->left_fork]);
-		ft_mut_print(main, "has taken left fork", init_time, main->name);
-		if (main->all->flag)
-			break ;
+		if (!main->all->flag && main->num_eat != main->all->must_eat)
+			forks_up(main, init_time);
 		main->actual_eat_time = elapsed_time_ms(init_time);
-		ft_mut_print(main, "is eating", init_time, main->name);
+		if (!main->all->flag && main->num_eat != main->all->must_eat)
+			ft_mut_print(main, "is eating", init_time, main->name);
 		ft_usleep(main->all->eat_time, main->actual_eat_time, init_time);
 		main->num_eat++;
-		pthread_mutex_unlock(&main->forks[main->left_fork]);
-		pthread_mutex_unlock(&main->forks[main->right_fork]);
-		if (main->all->flag)
-			break ;
+		forks_down(main);
 		asleep_time = elapsed_time_ms(init_time);
-		ft_mut_print(main, "is sleeping", init_time, main->name);
+		if (!main->all->flag && main->num_eat != main->all->must_eat)
+			ft_mut_print(main, "is sleeping", init_time, main->name);
 		ft_usleep(main->all->sleep_time, asleep_time, init_time);
 	}
 	return (NULL);
-}
-
-int	peace_death(t_phil main)
-{
-	int	time_elapsed;
-	int	death_time;
-
-	time_elapsed = elapsed_time_ms(main.all->init_time);
-	death_time = time_elapsed - main.actual_eat_time;
-	if (death_time - main.all->die_time > 0)
-		return (time_elapsed);
-	return (0);
-}
-
-int	death_loop(t_phil **main)
-{
-	int	i;
-
-	i = -1;
-	while (!(*main)->all->flag)
-	{
-		if (++i == (*main)->all->numb)
-			i = 0;
-		(*main)->all->flag = peace_death((*main)[i]);
-		if ((*main)[i].num_eat == (*main)->all->must_eat)
-			return (0);
-	}
-	pthread_mutex_lock(&(*main)[i].forks[(*main)->all->numb + 1]);
-	printf("%-7d %d is dead\n", (*main)->all->flag, (*main)[i].name);
-	return (0);
 }
 
 int	init_threads(t_phil *main, int flag)
@@ -203,6 +96,7 @@ int	init_threads(t_phil *main, int flag)
 		else
 			pthread_join(threads[i++], NULL);
 	}
+	free (threads);
 	return (0);
 }
 
@@ -222,6 +116,11 @@ int	main(int ac, char **av)
 	flag = init_mutex(&forks, all, flag);
 	flag = init_phils(&phils, all, forks, flag);
 	flag = init_threads(phils, flag);
+	free (forks);
+	free (all);
 	free (phils);
+	all = NULL;
+	phils = NULL;
+	forks = NULL;
 	return (0);
 }

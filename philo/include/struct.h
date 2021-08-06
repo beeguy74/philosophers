@@ -6,14 +6,14 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:54:29 by tphung            #+#    #+#             */
-/*   Updated: 2021/07/29 17:42:25 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/06 15:51:55 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCT_H
 # define STRUCT_H
 
-typedef struct timeval t_timeval;
+typedef struct timeval	t_timeval;
 
 typedef struct s_all
 {
@@ -24,7 +24,7 @@ typedef struct s_all
 	int				must_eat;
 	int				flag;
 	long long int	init_time;
-} t_all;
+}	t_all;
 
 typedef struct s_phil
 {
@@ -36,6 +36,6 @@ typedef struct s_phil
 	int				stop_eat;
 	pthread_mutex_t	*forks;
 	struct s_all	*all;
-} t_phil;
+}	t_phil;
 
 #endif
