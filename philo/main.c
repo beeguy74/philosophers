@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/06 17:12:26 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/07 12:27:21 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,33 +16,17 @@ void	forks_up(t_phil *main, long long int init_time)
 {
 	ft_mut_print(main, "is thinking", init_time, main->name);
 	if (main->name % 2 == 0)
-	{
-		pthread_mutex_lock(&main->forks[main->left_fork]);
-		ft_mut_print(main, "has taken left fork", init_time, main->name);
-		pthread_mutex_lock(&main->forks[main->right_fork]);
-		ft_mut_print(main, "has taken right fork", init_time, main->name);
-	}
-	else
-	{
-		pthread_mutex_lock(&main->forks[main->right_fork]);
-		ft_mut_print(main, "has taken right fork", init_time, main->name);
-		pthread_mutex_lock(&main->forks[main->left_fork]);
-		ft_mut_print(main, "has taken left fork", init_time, main->name);
-	}
+		usleep(500);
+	pthread_mutex_lock(&main->forks[main->right_fork]);
+	ft_mut_print(main, "has taken right fork", init_time, main->name);
+	pthread_mutex_lock(&main->forks[main->left_fork]);
+	ft_mut_print(main, "has taken left fork", init_time, main->name);
 }
 
 void	forks_down(t_phil *main)
 {
-	if (main->name % 2 == 0)
-	{
-		pthread_mutex_unlock(&main->forks[main->right_fork]);
-		pthread_mutex_unlock(&main->forks[main->left_fork]);
-	}
-	else
-	{
-		pthread_mutex_unlock(&main->forks[main->left_fork]);
-		pthread_mutex_unlock(&main->forks[main->right_fork]);
-	}
+	pthread_mutex_unlock(&main->forks[main->left_fork]);
+	pthread_mutex_unlock(&main->forks[main->right_fork]);
 }
 
 void	*eat(void *args)
