@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 15:01:37 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/06 17:14:46 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/09 17:31:08 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,10 @@ int	init_sem(t_all *all, int flag)
 	sem_unlink(all->sem_name);
 	all->sem = sem_open(all->sem_name, O_CREAT, 0666, all->numb);
 	if (!all->sem)
+		return (1);
+	sem_unlink(all->sem_even_name);
+	all->sem_even = sem_open(all->sem_even_name, O_CREAT, 0666, 1);
+	if (!all->sem_even)
 		return (1);
 	sem_unlink(all->sem_dth_name);
 	all->sem_dth = sem_open(all->sem_dth_name, O_CREAT, 0666, 0);

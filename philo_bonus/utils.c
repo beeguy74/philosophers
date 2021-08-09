@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/01 14:58:22 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/06 18:42:05 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/09 17:13:30 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 void	ft_usleep(int time, int when_asleep, long long int init_time)
 {
+	usleep(time * 900);
 	while (time > elapsed_time_ms(init_time) - when_asleep)
-		usleep(50);
+		usleep(100);
 }
 
 int	peace_death(t_main *main)
@@ -43,7 +44,7 @@ void	*death_loop(void *args)
 		if (main->all->flag)
 		{
 			main->all->flag = 0;
-			ft_usleep(main->all->die_time - 10, main->phil->actual_eat_time, \
+			ft_usleep(main->all->die_time - 5, main->phil->actual_eat_time, \
 													main->all->init_time);
 		}
 		death_time = peace_death(main);

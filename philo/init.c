@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/06 15:29:39 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/06 17:11:09 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/09 14:02:36 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,15 +80,15 @@ int	init_phils(t_phil **phils, t_all *all, pthread_mutex_t *forks, int flag)
 	{
 		repeating_values((*phils) + i, forks, all);
 		(*phils)[i].name = i + 1;
-		if (i == 0)
+		if (i == all->numb - 1)
 		{
-			(*phils)[i].right_fork = i;
-			(*phils)[i].left_fork = all->numb - 1;
+			(*phils)[i].right_fork = 0;
+			(*phils)[i].left_fork = i;
 		}
 		else
 		{
-			(*phils)[i].right_fork = i - 1;
-			(*phils)[i].left_fork = i;
+			(*phils)[i].right_fork = i;
+			(*phils)[i].left_fork = i + 1;
 		}
 		i++;
 	}

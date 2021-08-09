@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/02 17:34:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/06 18:39:48 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/09 16:40:29 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,7 @@ int	init_threads(t_phil *phil, t_all *all)
 	death_loop(&main);
 	i = 0;
 	while (i < 3)
-	{
 		pthread_detach(threads[i++]);
-	}
 	free (threads);
 	return (0);
 }
