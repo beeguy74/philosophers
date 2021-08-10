@@ -6,7 +6,7 @@
 /*   By: tphung <tphung@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/25 14:43:45 by tphung            #+#    #+#             */
-/*   Updated: 2021/08/09 17:26:18 by tphung           ###   ########.fr       */
+/*   Updated: 2021/08/10 11:19:38 by tphung           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,11 @@ void	is_eating(t_phil *phil, t_all *all)
 	int	time;
 
 	sem_wait(all->sem_even);
-	time = elapsed_time_ms(all->init_time);
 	sem_wait(all->sem);
+	time = elapsed_time_ms(all->init_time);
 	ft_sem_print("has taken a fork", time, phil->name, all->sem_prnt);
 	sem_wait(all->sem);
+	time = elapsed_time_ms(all->init_time);
 	ft_sem_print("has taken a fork", time, phil->name, all->sem_prnt);
 	sem_post(all->sem_even);
 	phil->actual_eat_time = elapsed_time_ms(all->init_time);
